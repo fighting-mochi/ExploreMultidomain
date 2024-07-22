@@ -162,19 +162,40 @@ def bto_defects(system: Dict[Vec3, Point]):
             if point.boundary != None and point.boundary < 1:
                 f.write(f"{x} {y} {z} {px * 134.106} {py} {pz}\n")
 
+def modu(bto_sto_acc: List, z: int):
+    if z < bto_sto_acc[0]:
+        return 8 # bto
+    elif bto_sto_acc[0] <= z < bto_sto_acc[1]:
+        return -8 # sto
+
+
+def bto_modulation(system: Dict[Vec3, Point], BTO_STO):
+    repeat = int(size[2]/sum(BTO_STO))
+    bto_sto = BTO_STO * repeat
+    bto_sto_acc=[sum(bto_sto[:y]) for y in range(1, len(bto_sto) + 1)]
+    with open("bto.modulation", "w") as f:
+        for coord, point in system.items():
+            x, y, z = coord
+            f.write(f"{x} {y} {z} {modu(bto_sto_acc,z)}\n") 
+
 
 if __name__ == "__main__":
 
-    size = (48, 96, 48)
+    size = (4, 6, 4)
 
     grains = [
-        Domain((24, 0, 0), Props(-1, 0, 0)),
-        Domain((0, 48, 0), Props(0, 1, 0)),
-        Domain((24, 95, 0), Props(1, 0, 0)),
-        Domain((48, 48, 0), Props(0, -1, 0)),
+        Domain((0, 0, 0), Props(0, 0, 0)),
+        # Domain((0, 48, 0), Props(0, 1, 0)),
+        # Domain((24, 95, 0), Props(1, 0, 0)),
+        # Domain((48, 48, 0), Props(0, -1, 0)),
     ]
 
     system = find_boundaries(size, grains)
 
-    [ f(system) for f in [bto_localfield, bto_defects] ]
+    ##### get .modulation: for superlattices
+    BTO_STO = [1,3]
+    bto_modulation(system, BTO_STO)
 
+
+    ##### get .localfield and .defects: for multidomains
+    # [ f(system) for f in [bto_localfield, bto_defects] ]
