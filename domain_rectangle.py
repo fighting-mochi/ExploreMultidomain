@@ -181,7 +181,7 @@ def bto_modulation(system: Dict[Vec3, Point], BTO_STO):
 
 if __name__ == "__main__":
 
-    size = (4, 6, 4)
+    size = (3, 3, 2)
 
     grains = [
         Domain((0, 0, 0), Props(0, 0, 0)),
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     system = find_boundaries(size, grains)
 
     ##### get .modulation: for superlattices
-    BTO_STO = [1,3]
+    BTO_STO = [1,1]
     bto_modulation(system, BTO_STO)
 
 
